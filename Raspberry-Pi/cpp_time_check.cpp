@@ -87,7 +87,7 @@ int main() {
 
             cv::imshow("pupil", drawing);
             frame_count++;
-            if (frame_count==1) {
+            if (frame_count==100) {
                 break;
             }
         }
