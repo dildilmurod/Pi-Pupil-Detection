@@ -1,6 +1,9 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
 #include <chrono>
+#include <vector>
+#include <sys/resource.h>
+#include <fstream>
 
 const int CANNY_THRESHOLD = 25;
 const int MEDIAN_BLUR_K_SIZE = 9;
@@ -55,6 +58,9 @@ int main() {
     // Timing Execution
     auto start_time = std::chrono::high_resolution_clock::now();
     int frame_count = 0;
+    
+    // resource usage
+    std::ifstream status_file("/proc/self/status");
 
     while (true) {
         cv::Mat pframe;
@@ -63,29 +69,44 @@ int main() {
         if (pret) {
             pframe = pframe(cv::Rect(0, 0, 480, 480));
             cv::Mat output = pframe.clone();
+            // Profiling
+            // Uncomment the following lines for profiling
+            auto start_profiling = std::chrono::high_resolution_clock::now();
+            
+            // take out as separate function
             cv::cvtColor(output, output, cv::COLOR_BGR2GRAY);
             cv::medianBlur(output, output, MEDIAN_BLUR_K_SIZE);
             cv::morphologyEx(output, output, cv::MORPH_OPEN, kernel);
             cv::Mat canny;
             cv::Canny(output, canny, CANNY_THRESHOLD, CANNY_THRESHOLD * 2);
-
-            // Profiling
-            // Uncomment the following lines for profiling
-            // auto start_profiling = std::chrono::high_resolution_clock::now();
-
             std::vector<std::vector<cv::Point>> contours;
             cv::findContours(canny, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
             std::vector<std::vector<cv::Point>> contours_filtered = filter_contour(contours);
             cv::Mat drawing = cv::Mat::zeros(canny.size(), CV_8UC3);
             drawing = draw_ellipse(output, contours_filtered);
 
+            cv::imshow("pupil", drawing);
+            
             // Profiling
             // Uncomment the following lines for profiling
-            // auto end_profiling = std::chrono::high_resolution_clock::now();
-            // auto profiling_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_profiling - start_profiling).count();
-            // std::cout << "Profiling Time: " << profiling_time << " milliseconds" << std::endl;
-
-            cv::imshow("pupil", drawing);
+            auto end_profiling = std::chrono::high_resolution_clock::now();
+            auto profiling_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_profiling - start_profiling).count();
+            std::cout << "Profiling Time: " << profiling_time << " milliseconds" << std::endl;
+            
+            //resource
+            std::string line;
+            while(std::getline(status_file, line)){
+                if(line.find("VmRSS") != std::string::npos){
+                    std::istringstream iss(line);
+                    std::string key, value;
+                    iss>>key>>value;
+                    std::cout<<"Mem usage: "<<value<<std::endl;
+                    break;
+                    }
+                }
+            status_file.clear();
+            status_file.seekg(0);
+            
             frame_count++;
             if (frame_count==100) {
                 break;
@@ -103,6 +124,7 @@ int main() {
     std::cout << "Total Frames: " << frame_count << std::endl;
     std::cout << "Total Execution Time: " << execution_time << " seconds" << std::endl;
     std::cout << "Average FPS: " << static_cast<double>(frame_count) / execution_time << std::endl;
+    
 
     pcap.release();
     cv::destroyAllWindows();

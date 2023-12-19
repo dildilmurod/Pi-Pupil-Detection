@@ -3,6 +3,7 @@ import numpy as np
 import random as rng
 import time
 import cProfile
+import psutil
 
 '''Change the parameters to conduct real-time detection'''
 CANNY_THRESHOLD = 25
@@ -57,17 +58,34 @@ frame_count = 0
 # Timing Execution
 start_time = time.time()
 
+#profiling
+profiler = cProfile.Profile()
+
+#resource usage
+process = psutil.Process()
+
 while True:
     pret, pframe = pcap.read()
     if pret:
         pframe = pframe[0:480, 0:480]
+        
+        profiler.enable()
+        
         output_frame = process_frame(pframe)
         cv2.imshow('Processed Frame', output_frame)
+        
+        profiler.disable()
+        
+        cpu_percent = psutil.cpu_percent()
+        memory_percent = process.memory_percent()
+
         frame_count += 1
         if frame_count==100:
             break
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
+
+
 
 # Timing Execution
 end_time = time.time()
@@ -75,6 +93,11 @@ execution_time = end_time - start_time
 print(f"Total Frames: {frame_count}")
 print(f"Total Execution Time: {execution_time} seconds")
 print(f"Average FPS: {frame_count / execution_time}")
+
+profiler.print_stats(sort="cumulative")
+
+print(f"Average cpu usage {cpu_percent}")
+print(f"Average memory usage {memory_percent}")
 
 pcap.release()
 cv2.destroyAllWindows()
