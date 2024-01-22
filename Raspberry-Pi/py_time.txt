@@ -1,0 +1,40 @@
+Total Frames: 100
+Total Execution Time: 3.931283473968506 seconds
+Average FPS: 25.436985315905794
+         18824 function calls in 3.207 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+      100    0.012    0.000    3.035    0.030 python_time_check.py:37(process_frame)
+      100    2.341    0.023    2.341    0.023 {medianBlur}
+      100    0.222    0.002    0.222    0.002 {Canny}
+      100    0.172    0.002    0.172    0.002 {imshow}
+      100    0.102    0.001    0.102    0.001 {method 'copy' of 'numpy.ndarray' objects}
+      100    0.023    0.000    0.101    0.001 python_time_check.py:13(filter_contour)
+      100    0.096    0.001    0.096    0.001 {findContours}
+      100    0.083    0.001    0.083    0.001 {cvtColor}
+     7496    0.058    0.000    0.058    0.000 {convexHull}
+      100    0.036    0.000    0.036    0.000 {built-in method numpy.zeros}
+      100    0.002    0.000    0.023    0.000 python_time_check.py:28(draw_ellipse)
+     7496    0.018    0.000    0.018    0.000 {contourArea}
+      100    0.012    0.000    0.012    0.000 {morphologyEx}
+       76    0.010    0.000    0.010    0.000 {ellipse}
+      100    0.001    0.000    0.008    0.000 numeric.py:144(ones)
+       76    0.006    0.000    0.006    0.000 {fitEllipse}
+      100    0.002    0.000    0.005    0.000 <__array_function__ internals>:2(copyto)
+      100    0.003    0.000    0.003    0.000 {built-in method numpy.core._multiarray_umath.implement_array_function}
+       76    0.003    0.000    0.003    0.000 {drawContours}
+      228    0.001    0.000    0.002    0.000 random.py:335(randint)
+      100    0.002    0.000    0.002    0.000 {built-in method numpy.empty}
+      228    0.001    0.000    0.002    0.000 random.py:291(randrange)
+      345    0.001    0.000    0.001    0.000 {arcLength}
+      228    0.001    0.000    0.001    0.000 random.py:238(_randbelow_with_getrandbits)
+      100    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+      471    0.000    0.000    0.000    0.000 {method 'getrandbits' of '_random.Random' objects}
+      100    0.000    0.000    0.000    0.000 {built-in method builtins.len}
+      100    0.000    0.000    0.000    0.000 multiarray.py:1043(copyto)
+       76    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}
+      228    0.000    0.000    0.000    0.000 {method 'bit_length' of 'int' objects}
+
+

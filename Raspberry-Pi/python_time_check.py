@@ -47,11 +47,14 @@ def process_frame(frame):
     drawing = draw_ellipse(opening, contours_filtered)
     return drawing
 
-srcPiCam = 'libcamerasrc ! video/x-raw,width=640,height=480 ! videoflip method=clockwise ! videoconvert ! appsink drop=True'
-pcap = cv2.VideoCapture(srcPiCam)
+#srcPiCam = 'libcamerasrc ! video/x-raw,width=640,height=480 ! videoflip method=clockwise ! videoconvert ! appsink drop=True'
+#pcap = cv2.VideoCapture(srcPiCam)
 
-if pcap.isOpened():
-    print(f'Pi Camera is available.')
+vpath = "/home/demo/Desktop/LPW data/LPW/2/4.avi"
+pcap = cv2.VideoCapture(vpath)
+
+if not pcap.isOpened():
+    print(f'Pi camera is not working')
 
 frame_count = 0
 
@@ -62,7 +65,7 @@ start_time = time.time()
 profiler = cProfile.Profile()
 
 #resource usage
-process = psutil.Process()
+#process = psutil.Process()
 
 while True:
     pret, pframe = pcap.read()
@@ -76,8 +79,8 @@ while True:
         
         profiler.disable()
         
-        cpu_percent = psutil.cpu_percent()
-        memory_percent = process.memory_percent()
+        #cpu_percent = psutil.cpu_percent()
+        #memory_percent = process.memory_percent()
 
         frame_count += 1
         if frame_count==100:
@@ -96,8 +99,8 @@ print(f"Average FPS: {frame_count / execution_time}")
 
 profiler.print_stats(sort="cumulative")
 
-print(f"Average cpu usage {cpu_percent}")
-print(f"Average memory usage {memory_percent}")
+#print(f"Average cpu usage {cpu_percent}")
+#print(f"Average memory usage {memory_percent}")
 
 pcap.release()
 cv2.destroyAllWindows()
@@ -113,22 +116,6 @@ cv2.destroyAllWindows()
 # def main():
 #     # Load the LPW dataset or use your own dataset
 #     # images = load_lpw_dataset()
-
-#     # Timing Execution
-#     start_time = time.time()
-#     for image in images:
-#         pupil_detection_algorithm(image)
-#     execution_time = time.time() - start_time
-#     print(f"Python Execution Time: {execution_time} seconds")
-
-#     # Profiling Tools
-#     # Uncomment the following lines for profiling
-#     # profiler = cProfile.Profile()
-#     # profiler.enable()
-#     # for image in images:
-#     #     pupil_detection_algorithm(image)
-#     # profiler.disable()
-#     # profiler.print_stats(sort='cumulative')
 
 #     # Benchmarking
 #     # You can add more detailed benchmarking as needed

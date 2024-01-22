@@ -1,0 +1,1 @@
+g++ cpp_time_check.cpp -o timecheck `pkg-config --cflags --libs opencv4`

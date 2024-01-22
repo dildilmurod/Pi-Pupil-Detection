@@ -4,12 +4,16 @@
 #include <vector>
 #include <sys/resource.h>
 #include <fstream>
+#include <string>
 
 const int CANNY_THRESHOLD = 25;
 const int MEDIAN_BLUR_K_SIZE = 9;
 const int MORPH_K_SIZE = 1;
+double blur_final_time = 0;
+
 
 cv::RNG rng;
+
 
 std::vector<std::vector<cv::Point>> filter_contour(const std::vector<std::vector<cv::Point>>& contours) {
     std::vector<std::vector<cv::Point>> contours_filtered;
@@ -46,21 +50,48 @@ cv::Mat draw_ellipse(cv::Mat& _drawing, const std::vector<std::vector<cv::Point>
     return _drawing;
 }
 
+cv::Mat process_frame(cv::Mat& pframe) {
+    cv::cvtColor(pframe, pframe, cv::COLOR_BGR2GRAY);
+    
+    auto blur_start_time = std::chrono::high_resolution_clock::now();
+    cv::medianBlur(pframe, pframe, MEDIAN_BLUR_K_SIZE);
+    auto blur_end_time = std::chrono::high_resolution_clock::now();
+    auto blur_execution_time = std::chrono::duration_cast<std::chrono::milliseconds>(blur_end_time - blur_start_time).count();
+    blur_final_time += blur_execution_time/1000.00;
+    
+    
+    cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(MORPH_K_SIZE, MORPH_K_SIZE));
+    cv::morphologyEx(pframe, pframe, cv::MORPH_OPEN, kernel);
+    cv::Mat canny;
+    cv::Canny(pframe, canny, CANNY_THRESHOLD, CANNY_THRESHOLD * 2);
+    std::vector<std::vector<cv::Point>> contours;
+    cv::findContours(canny, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+    std::vector<std::vector<cv::Point>> contours_filtered = filter_contour(contours);
+    cv::Mat drawing = cv::Mat::zeros(canny.size(), CV_8UC3);
+    drawing = draw_ellipse(pframe, contours_filtered);
+    return drawing;
+}
+
 int main() {
-    cv::VideoCapture pcap("libcamerasrc ! video/x-raw,width=640,height=480 ! videoflip method=clockwise ! videoconvert ! appsink drop=True");
+    //cv::VideoCapture pcap("libcamerasrc ! video/x-raw,width=640,height=480 ! videoflip method=clockwise ! videoconvert ! appsink drop=True");
+    
+    //reading from the file
+    std::string path = "/home/demo/Desktop/LPW data/LPW/2/4.avi";
+    cv::VideoCapture pcap(path);
+    
     if (!pcap.isOpened()) {
-        std::cout << "Pi camera is not working:" << std::endl;
+        std::cout << "Pi camera is not working" << std::endl;
         return -1;
     }
 
-    cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(MORPH_K_SIZE, MORPH_K_SIZE));
+    
 
     // Timing Execution
     auto start_time = std::chrono::high_resolution_clock::now();
     int frame_count = 0;
+    int ncalls = 100;
+    double process_final_time = 0;
     
-    // resource usage
-    std::ifstream status_file("/proc/self/status");
 
     while (true) {
         cv::Mat pframe;
@@ -68,47 +99,23 @@ int main() {
 
         if (pret) {
             pframe = pframe(cv::Rect(0, 0, 480, 480));
-            cv::Mat output = pframe.clone();
-            // Profiling
-            // Uncomment the following lines for profiling
-            auto start_profiling = std::chrono::high_resolution_clock::now();
             
-            // take out as separate function
-            cv::cvtColor(output, output, cv::COLOR_BGR2GRAY);
-            cv::medianBlur(output, output, MEDIAN_BLUR_K_SIZE);
-            cv::morphologyEx(output, output, cv::MORPH_OPEN, kernel);
-            cv::Mat canny;
-            cv::Canny(output, canny, CANNY_THRESHOLD, CANNY_THRESHOLD * 2);
-            std::vector<std::vector<cv::Point>> contours;
-            cv::findContours(canny, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
-            std::vector<std::vector<cv::Point>> contours_filtered = filter_contour(contours);
-            cv::Mat drawing = cv::Mat::zeros(canny.size(), CV_8UC3);
-            drawing = draw_ellipse(output, contours_filtered);
-
-            cv::imshow("pupil", drawing);
             
-            // Profiling
-            // Uncomment the following lines for profiling
-            auto end_profiling = std::chrono::high_resolution_clock::now();
-            auto profiling_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_profiling - start_profiling).count();
-            std::cout << "Profiling Time: " << profiling_time << " milliseconds" << std::endl;
+            //cv::Mat output_frame =  process_frame(pframe);
+            //profiling
+            auto process_start_time = std::chrono::high_resolution_clock::now();
             
-            //resource
-            std::string line;
-            while(std::getline(status_file, line)){
-                if(line.find("VmRSS") != std::string::npos){
-                    std::istringstream iss(line);
-                    std::string key, value;
-                    iss>>key>>value;
-                    std::cout<<"Mem usage: "<<value<<std::endl;
-                    break;
-                    }
-                }
-            status_file.clear();
-            status_file.seekg(0);
+            
+            cv::imshow("pupil", process_frame(pframe));
+            
+            //profiling
+            auto process_end_time = std::chrono::high_resolution_clock::now();
+            auto process_execution_time = std::chrono::duration_cast<std::chrono::milliseconds>(process_end_time - process_start_time).count();
+            process_final_time += process_execution_time/1000.00;
+            
             
             frame_count++;
-            if (frame_count==100) {
+            if (frame_count==ncalls) {
                 break;
             }
         }
@@ -120,10 +127,13 @@ int main() {
 
     // Timing Execution
     auto end_time = std::chrono::high_resolution_clock::now();
-    auto execution_time = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time).count();
+    auto execution_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
     std::cout << "Total Frames: " << frame_count << std::endl;
-    std::cout << "Total Execution Time: " << execution_time << " seconds" << std::endl;
-    std::cout << "Average FPS: " << static_cast<double>(frame_count) / execution_time << std::endl;
+    double final_time = execution_time/1000.00;
+    std::cout << "Total Execution Time: " << final_time << " seconds" << std::endl;
+    std::cout << "Average FPS: " << static_cast<double>(frame_count) / final_time << std::endl;
+    std::cout << "Cumulative process_frame() time: " << process_final_time << " -  Per call avg: "<< process_final_time/ncalls << std::endl;
+    std::cout << "Cumulative Median Blur time: " << blur_final_time << " -  Per call avg: "<< blur_final_time/ncalls << std::endl;
     
 
     pcap.release();
@@ -134,49 +144,3 @@ int main() {
 
 
 
-// #include <iostream>
-// #include <chrono>
-
-// void pupil_detection_algorithm(/* image parameters here */) {
-//     // Your C++ implementation of the pupil detection algorithm here
-// }
-
-// int main() {
-//     // Load the LPW dataset or use your own dataset
-//     // std::vector<Image> images = load_lpw_dataset();
-
-//     // Timing Execution
-//     auto start_time = std::chrono::high_resolution_clock::now();
-//     for (const auto& image : images) {
-//         pupil_detection_algorithm(/* pass image parameters */);
-//     }
-//     auto end_time = std::chrono::high_resolution_clock::now();
-//     auto execution_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
-//     std::cout << "C++ Execution Time: " << execution_time << " milliseconds" << std::endl;
-
-//     // Profiling Tools
-//     // Uncomment the following lines for profiling
-//     // std::cout << "Profiling..." << std::endl;
-//     // auto start_profiling = std::chrono::high_resolution_clock::now();
-//     // for (const auto& image : images) {
-//     //     pupil_detection_algorithm(/* pass image parameters */);
-//     // }
-//     // auto end_profiling = std::chrono::high_resolution_clock::now();
-//     // auto profiling_time = std::chrono::duration_cast<std::chrono::milliseconds>(end_profiling - start_profiling).count();
-//     // std::cout << "Profiling Time: " << profiling_time << " milliseconds" << std::endl;
-
-//     // Benchmarking
-//     // You can add more detailed benchmarking as needed
-//     // auto benchmark_start = std::chrono::high_resolution_clock::now();
-//     // for (int i = 0; i < NUM_ITERATIONS; ++i) {
-//     //     pupil_detection_algorithm(/* pass image parameters */);
-//     // }
-//     // auto benchmark_end = std::chrono::high_resolution_clock::now();
-//     // auto benchmark_execution_time = std::chrono::duration_cast<std::chrono::milliseconds>(benchmark_end - benchmark_start).count();
-//     // std::cout << "Benchmark Execution Time: " << benchmark_execution_time << " milliseconds" << std::endl;
-
-//     // Resource Usage
-//     // You can use system commands or external libraries to gather resource usage data
-
-//     return 0;
-// }

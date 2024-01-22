@@ -1,0 +1,5 @@
+Total Frames: 100
+Total Execution Time: 3.706 seconds
+Average FPS: 26.9833
+Cumulative process_frame() time: 2.947 -  Per call avg: 0.02947
+Cumulative Median Blur time: 2.309 -  Per call avg: 0.02309
