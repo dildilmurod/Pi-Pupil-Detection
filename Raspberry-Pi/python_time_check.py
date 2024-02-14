@@ -40,9 +40,11 @@ def process_frame(frame):
     src_gray = cv2.medianBlur(src_gray, MEDIAN_BLUR_K_SIZE)
     kernel = np.ones((MORPH_K_SIZE, MORPH_K_SIZE), np.uint8)
     opening = cv2.morphologyEx(src_gray, cv2.MORPH_OPEN, kernel)
+    
     canny = cv2.Canny(opening, CANNY_THRESHOLD, CANNY_THRESHOLD * 2)
     contours, _ = cv2.findContours(canny, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     contours_filtered = filter_contour(contours)
+    
     drawing = np.zeros((canny.shape[0], canny.shape[1], 3), dtype=np.uint8)
     drawing = draw_ellipse(opening, contours_filtered)
     return drawing
@@ -68,9 +70,14 @@ profiler = cProfile.Profile()
 #process = psutil.Process()
 
 while True:
+    width  = pcap.get(cv2.CAP_PROP_FRAME_WIDTH)   # float `width`
+    height = pcap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    print(height, ' ', width)
     pret, pframe = pcap.read()
     if pret:
-        pframe = pframe[0:480, 0:480]
+        
+        #pframe = pframe[0:2:480, 0:2:480]
+        pframe = cv2.resize(pframe, (320, 240))
         
         profiler.enable()
         

@@ -98,7 +98,10 @@ int main() {
         bool pret = pcap.read(pframe);
 
         if (pret) {
-            pframe = pframe(cv::Rect(0, 0, 480, 480));
+            cv::Mat resize_down;
+            //pframe = resize(pframe, (320, 240));
+            
+            resize(pframe, resize_down, cv::Size(320, 240));
             
             
             //cv::Mat output_frame =  process_frame(pframe);
@@ -106,7 +109,7 @@ int main() {
             auto process_start_time = std::chrono::high_resolution_clock::now();
             
             
-            cv::imshow("pupil", process_frame(pframe));
+            cv::imshow("pupil", process_frame(resize_down));
             
             //profiling
             auto process_end_time = std::chrono::high_resolution_clock::now();
