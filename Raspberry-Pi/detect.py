@@ -18,15 +18,22 @@ def filter_contour(_contours):
         try:
             convex_hull = cv2.convexHull(c)
             area_hull = cv2.contourArea(convex_hull)
+	    
             # print("{} area convex hull {}".format(i, area_hull))
+	    
             if 600 < area_hull:  # filtering based on area
                 circumference_hull = cv2.arcLength(convex_hull, True)
                 circularity_hull = (4 * np.pi * area_hull) / circumference_hull ** 2
+		
                 if 0.8 < circularity_hull:  # filtering based on circularity
+			
                     #print("convex hull :{} Circularity :{} Area : {}".format(i, circularity_hull, area_hull))
+		    
                     _contours_filtered.append(convex_hull)
+		    
         except ZeroDivisionError:
             print("Division by zero for contour {}".format(i))
+	    
     return _contours_filtered
 
 
@@ -46,7 +53,10 @@ def draw_ellipse(_drawing, _contours_filtered):
 
 
 srcPiCam = 'libcamerasrc ! video/x-raw,width=640,height=480 ! videoflip method=clockwise ! videoconvert ! appsink drop=True'
-pcap = cv2.VideoCapture(srcPiCam)
+vpath = "/home/demo/Desktop/LPW data/LPW/2/4.avi"
+#pcap = cv2.VideoCapture(srcPiCam)
+pcap = cv2.VideoCapture(vpath)
+
 if pcap.isOpened():
         print(f'Puil camera available:')
         
