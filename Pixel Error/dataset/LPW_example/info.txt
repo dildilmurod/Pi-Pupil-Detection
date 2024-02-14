@@ -1,0 +1,7 @@
+The complete dataset can be downloded from 
+
+https://www.mpi-inf.mpg.de/departments/computer-vision-and-machine-learning/research/gaze-based-human-computer-interaction/labelled-pupils-in-the-wild-lpw
+
+
+Marc Tonsen, Xucong Zhang, Yusuke Sugano, Andreas Bulling
+Labelled pupils in the wild: A dataset for studying pupil detection in unconstrained environments (Inproceeding) Proc. of the 9th ACM International Symposium on Eye Tracking Research & Applications (ETRA 2016), pp. 139-142, 2016.

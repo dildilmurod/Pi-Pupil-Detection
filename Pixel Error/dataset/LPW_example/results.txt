@@ -1,0 +1,31 @@
+Experiment 1
+2000 frames
+119 not identified
+8 misidentified
+
+
+Subject 1
+CANNY 18	MEDIAN 21	MORPH 1
+# 320x240 - 1 - 78.0	4 - 74.83	   9 - 74.83
+# 480x480 - 1 - 93.65   4 - 35.51      9 - 77.6
+
+CANNY 25	MEDIAN 9	MORPH 1
+# 320x240 - 1 - 85.0	4 - 78.78	   9 - 75.9 
+# 480x480 - 1 - 82.75	4 - 10.1	9 - 64.25
+
+
+Subject 2
+CANNY 18	MEDIAN 21	MORPH 1
+# 320x240 - 4 - 60.45	10 - 0		13 - 17.7
+# 480x480 - 4 - 64.65	10 - 0.05	13 - 12.4
+
+CANNY 25	MEDIAN 9	MORPH 1
+# 320x240 - 4 - 68.8	10 - 0		13 - 2.8
+# 480x480 - 4 - 43.4	10 - 0		13 - 4.5
+
+
+look for pupil center detection algorithm -  google scholar
+LPW data reference
+look for methodologies
+
+different examples of the frames - eye position and condition of the experiment
