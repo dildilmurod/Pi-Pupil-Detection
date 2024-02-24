@@ -14,14 +14,16 @@ import pyautogui
     See Master thesis for the formula used.
     
 """
-CANNY_THRESHOLD = 18
-MEDIAN_BLUR_K_SIZE = 21
+#CANNY_THRESHOLD = 18
+#MEDIAN_BLUR_K_SIZE = 21
 #CANNY_THRESHOLD = 25
 #MEDIAN_BLUR_K_SIZE = 9
+CANNY_THRESHOLD = 21
+MEDIAN_BLUR_K_SIZE = 13
 MORPH_K_SIZE = 1
 
 # dataset folder path
-folder_path = r"dataset/LPW_example/LPW_subject2"
+folder_path = r"dataset/LPW_example/LPW_subject10"
 #file_path = glob.glob(folder_path+r"\*avi")
 file_path = fnmatch.filter(os.listdir(folder_path), '*.avi')
 
@@ -89,7 +91,6 @@ for file in file_path:
         ret, frame = cap.read()
 
         if ret:
-            #frame = cv2.resize(frame, (320, 240))
             src_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
             src_gray = cv.medianBlur(src_gray, MEDIAN_BLUR_K_SIZE)
             output = frame.copy()
@@ -153,7 +154,7 @@ for file in file_path:
     file_name = Path(file).stem
 
     # Uncomment to store the experiment file
-    df_pupil_location.to_csv(folder_path + rf"\Experiment_{int(file_name)}_canny_{CANNY_THRESHOLD}_blur_{MEDIAN_BLUR_K_SIZE}.csv", sep='\t', index=False)
+    df_pupil_location.to_csv(folder_path + rf"/Experiment_{int(file_name)}_canny_{CANNY_THRESHOLD}_blur_{MEDIAN_BLUR_K_SIZE}.csv", sep='\t', index=False)
     cap.release()
 
 cv.destroyAllWindows()
