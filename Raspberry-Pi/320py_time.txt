@@ -1,0 +1,38 @@
+Total Frames: 2000
+Total Execution Time: 90.10898566246033 seconds
+Average FPS: 22.19534472945694
+         187896 function calls in 60.676 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+     2000    0.304    0.000   59.685    0.030 python_time_check.py:41(process_frame)
+     2000   50.118    0.025   50.118    0.025 {medianBlur}
+     2000    2.458    0.001    2.458    0.001 {Canny}
+     2000    0.460    0.000    2.099    0.001 python_time_check.py:17(filter_contour)
+     2000    1.569    0.001    1.569    0.001 {findContours}
+    53906    1.241    0.000    1.241    0.000 {convexHull}
+     2000    0.109    0.000    1.188    0.001 python_time_check.py:32(draw_ellipse)
+     2000    0.985    0.000    0.985    0.000 {imshow}
+     2000    0.735    0.000    0.735    0.000 {cvtColor}
+     1970    0.542    0.000    0.542    0.000 {ellipse}
+     2000    0.513    0.000    0.513    0.000 {method 'copy' of 'numpy.ndarray' objects}
+    53906    0.344    0.000    0.344    0.000 {contourArea}
+     2000    0.279    0.000    0.279    0.000 {built-in method numpy.zeros}
+     1970    0.274    0.000    0.274    0.000 {fitEllipse}
+     2000    0.182    0.000    0.236    0.000 numeric.py:136(ones)
+     2000    0.187    0.000    0.187    0.000 {morphologyEx}
+     5910    0.034    0.000    0.138    0.000 random.py:335(randint)
+     1970    0.121    0.000    0.121    0.000 {drawContours}
+     5910    0.046    0.000    0.103    0.000 random.py:291(randrange)
+     5910    0.038    0.000    0.057    0.000 random.py:238(_randbelow_with_getrandbits)
+     2000    0.050    0.000    0.050    0.000 {built-in method numpy.empty}
+     4950    0.048    0.000    0.048    0.000 {arcLength}
+    11614    0.013    0.000    0.013    0.000 {method 'getrandbits' of '_random.Random' objects}
+     1970    0.006    0.000    0.006    0.000 {method 'append' of 'list' objects}
+     2000    0.006    0.000    0.006    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+     5910    0.006    0.000    0.006    0.000 {method 'bit_length' of 'int' objects}
+     2000    0.004    0.000    0.004    0.000 multiarray.py:1080(copyto)
+     2000    0.004    0.000    0.004    0.000 {built-in method builtins.len}
+
+

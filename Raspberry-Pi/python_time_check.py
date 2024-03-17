@@ -6,8 +6,12 @@ import cProfile
 import psutil
 
 '''Change the parameters to conduct real-time detection'''
-CANNY_THRESHOLD = 25
-MEDIAN_BLUR_K_SIZE = 9
+## for 640
+#CANNY_THRESHOLD = 18
+#MEDIAN_BLUR_K_SIZE = 23
+## for 320
+CANNY_THRESHOLD = 39
+MEDIAN_BLUR_K_SIZE = 13
 MORPH_K_SIZE = 1
 
 def filter_contour(_contours):
@@ -52,7 +56,7 @@ def process_frame(frame):
 #srcPiCam = 'libcamerasrc ! video/x-raw,width=640,height=480 ! videoflip method=clockwise ! videoconvert ! appsink drop=True'
 #pcap = cv2.VideoCapture(srcPiCam)
 
-vpath = "/home/demo/Desktop/LPW data/LPW/2/4.avi"
+vpath = "/home/demo/Desktop/LPW data/LPW/1/1.avi"
 pcap = cv2.VideoCapture(vpath)
 
 if not pcap.isOpened():
@@ -70,13 +74,12 @@ profiler = cProfile.Profile()
 #process = psutil.Process()
 
 while True:
-    width  = pcap.get(cv2.CAP_PROP_FRAME_WIDTH)   # float `width`
-    height = pcap.get(cv2.CAP_PROP_FRAME_HEIGHT)
-    print(height, ' ', width)
+    #width  = pcap.get(cv2.CAP_PROP_FRAME_WIDTH)   # float `width`
+    #height = pcap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    #print(height, ' ', width)
     pret, pframe = pcap.read()
     if pret:
         
-        #pframe = pframe[0:2:480, 0:2:480]
         pframe = cv2.resize(pframe, (320, 240))
         
         profiler.enable()
@@ -90,7 +93,7 @@ while True:
         #memory_percent = process.memory_percent()
 
         frame_count += 1
-        if frame_count==100:
+        if frame_count==2000:
             break
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break

@@ -18,12 +18,12 @@ import pyautogui
 #MEDIAN_BLUR_K_SIZE = 21
 #CANNY_THRESHOLD = 25
 #MEDIAN_BLUR_K_SIZE = 9
-CANNY_THRESHOLD = 21
-MEDIAN_BLUR_K_SIZE = 13
+#CANNY_THRESHOLD = 21
+#MEDIAN_BLUR_K_SIZE = 13
 MORPH_K_SIZE = 1
 
 # dataset folder path
-folder_path = r"dataset/LPW_example/LPW_subject10"
+folder_path = r"dataset/LPW_example/LPW_subject8"
 #file_path = glob.glob(folder_path+r"\*avi")
 file_path = fnmatch.filter(os.listdir(folder_path), '*.avi')
 
@@ -76,8 +76,7 @@ def calculate_centre(_contours_filtered):
 
 print("start'n")
 print(file_path)
-final_out = 'detected'
-extra_pupil = 'extra'
+
 for file in file_path:
     cap = cv.VideoCapture(folder_path + '/' + file)
     print(file)
