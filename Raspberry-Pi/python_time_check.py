@@ -53,11 +53,11 @@ def process_frame(frame):
     drawing = draw_ellipse(opening, contours_filtered)
     return drawing
 
-#srcPiCam = 'libcamerasrc ! video/x-raw,width=640,height=480 ! videoflip method=clockwise ! videoconvert ! appsink drop=True'
-#pcap = cv2.VideoCapture(srcPiCam)
+srcPiCam = 'libcamerasrc ! video/x-raw,width=640,height=480 ! videoflip method=clockwise ! videoconvert ! appsink drop=True'
+pcap = cv2.VideoCapture(srcPiCam)
 
-vpath = "/home/demo/Desktop/LPW data/LPW/1/1.avi"
-pcap = cv2.VideoCapture(vpath)
+#vpath = "/home/demo/Desktop/LPW data/LPW/1/1.avi"
+#pcap = cv2.VideoCapture(vpath)
 
 if not pcap.isOpened():
     print(f'Pi camera is not working')
@@ -80,7 +80,7 @@ while True:
     pret, pframe = pcap.read()
     if pret:
         
-        pframe = cv2.resize(pframe, (320, 240))
+        #pframe = cv2.resize(pframe, (320, 240))
         
         profiler.enable()
         

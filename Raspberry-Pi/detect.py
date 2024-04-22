@@ -5,8 +5,8 @@ import numpy as np
 import random as rng
 
 '''Change the parameters to conduct a real time detection'''
-CANNY_THRESHOLD = 25
-MEDIAN_BLUR_K_SIZE = 9
+CANNY_THRESHOLD = 18
+MEDIAN_BLUR_K_SIZE = 21
 MORPH_K_SIZE = 1
 
 
@@ -52,7 +52,7 @@ def draw_ellipse(_drawing, _contours_filtered):
 
 
 
-srcPiCam = 'libcamerasrc ! video/x-raw,width=640,height=480 ! videoflip method=clockwise ! videoconvert ! appsink drop=True'
+#srcPiCam = 'libcamerasrc ! video/x-raw,width=640,height=480 ! videoflip method=clockwise ! videoconvert ! appsink drop=True'
 vpath = "/home/demo/Desktop/LPW data/LPW/2/4.avi"
 #pcap = cv2.VideoCapture(srcPiCam)
 pcap = cv2.VideoCapture(vpath)
@@ -65,7 +65,7 @@ kernel = np.ones((MORPH_K_SIZE, MORPH_K_SIZE), np.uint8)
 while True:
 	pret, pframe = pcap.read()
 	if pret: 
-		pframe = pframe[0:480, 0:480]
+		#pframe = pframe[0:480, 0:480]
 		output = pframe.copy()
 		src_gray = cv2.cvtColor(output, cv2.COLOR_BGR2GRAY)
 		src_gray = cv2.medianBlur(src_gray, MEDIAN_BLUR_K_SIZE)
